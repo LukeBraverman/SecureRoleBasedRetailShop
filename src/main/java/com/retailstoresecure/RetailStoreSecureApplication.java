@@ -11,3 +11,7 @@ public class RetailStoreSecureApplication {
     }
 
 }
+
+
+
+//TODO: -Write tests -create security config file -create worker models and entities with roles - create sample data on startup
