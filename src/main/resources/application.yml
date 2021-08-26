@@ -5,7 +5,7 @@ server:
 
 spring:
   datasource:
-    password: CIVeng123
+    password: CorrectPass
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     initialization-mode: always

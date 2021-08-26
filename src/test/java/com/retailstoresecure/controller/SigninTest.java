@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -33,14 +34,14 @@ class SigninTest {
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(value = "spring" , roles = "WORKER")
+    @WithMockUser(value = "spring" , authorities = "WORKER")
     @Test
     public void givenAuthRequestOnHome_AndWorkerRole_shouldSucceedWith200() throws Exception {
         mvc.perform(get("/")                                                             )
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(value = "spring" , roles = "MANAGER")
+    @WithMockUser(value = "spring" , authorities = "MANAGER")
     @Test
     public void givenAuthRequestOnHome_AndManagerRole_shouldSucceedWith200() throws Exception {
         mvc.perform(get("/")                                                             )
@@ -52,14 +53,14 @@ class SigninTest {
 
 
 
-    @WithMockUser(value = "spring" , roles = "WORKER")
+    @WithMockUser(value = "spring" , authorities = "WORKER")
     @Test
     public void givenAuthRequestOnEmployeeSchedule_AndWorkerRole_shouldSucceedWith200() throws Exception {
         mvc.perform(get("/employee/timetable")                                                             )
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(value = "spring" , roles = "MANAGER")
+    @WithMockUser(value = "spring" , authorities = "MANAGER")
     @Test
     public void givenAuthRequestOnEmployeeSchedule_AndManagerRole_shouldSucceedWith200() throws Exception {
         mvc.perform(get("/employee/timetable")                                                             )
@@ -69,33 +70,35 @@ class SigninTest {
 
     @Test()
     @WithAnonymousUser
-    public void givenUnauthenticated_whenEmployeeSchedule_thenThrowsException() throws Exception {
+    public void givenUnauthenticated_whenEmployeeSchedule_thenRedirects() throws Exception {
         mvc.perform(get("/employee/timetable")                                                             )
-                .andExpect(status().isUnauthorized());
+                .andExpect(redirectedUrl("http://localhost/login"));
     }
 
 
 
-    @WithMockUser(value = "spring" , roles = "MANAGER")
+    @WithMockUser(value = "spring" , authorities = "MANAGER")
     @Test
     public void givenAuthRequestOnEmployeePay_AndManagerRole_shouldSucceedWith200() throws Exception {
         mvc.perform(get("/admin/workerpay")                                                             )
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(value = "spring" , roles = "Worker")
+    @WithMockUser(value = "spring" , authorities = "WORKER")
     @Test
     public void givenAuthRequestOnEmployeePay_AndWorkerRole_ThenUnAuthorised() throws Exception {
         mvc.perform(get("/admin/workerpay")                                                             )
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
     }
-
 
     @Test()
     @WithAnonymousUser
-    public void givenUnauthenticated_whenEmployeePay_thenThrowsException() throws Exception {
-        mvc.perform(get("/admin/pay")                                                             )
-                .andExpect(status().isUnauthorized());
+    public void givenUnauthenticated_whenEmployeePay_thenRedirects() throws Exception {
+        mvc.perform(get("/admin/workerpay")                                                             )
+                .andExpect(redirectedUrl("http://localhost/login"));
     }
+
+
+
 
 }
